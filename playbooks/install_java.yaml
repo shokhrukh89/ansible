@@ -1,0 +1,4 @@
+- hosts: 192.168.1.222
+  become: yes
+  roles:
+    - role: "/home/ansible/roles/geerlingguy.java"
