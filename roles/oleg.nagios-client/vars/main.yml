@@ -1,0 +1,7 @@
+---
+# vars file for roles/oleg.nagios-client
+nagios_server_ip: 192.168.1.221
+check_commands:
+  - "command[check_disk]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /"
+  - "command[check_swap]=/usr/lib64/nagios/plugins/check_swap -w 20% -c 10%"
+  - "command[check_dns]=/usr/lib64/nagios/plugins/check_dns -H labx-ntp-001.local -s 192.168.1.230 -q ANY"

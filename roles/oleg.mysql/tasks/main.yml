@@ -1,0 +1,64 @@
+---
+# tasks file for /home/ansible/roles/oleg.mysql
+- name: Install epel-release repo
+  yum:
+    name: "epel-release"
+    state: latest
+ 
+- name: Install required packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ package_list }}"
+ 
+- name: Start and enable required services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop: "{{ service_list }}"
+ 
+- name: Mysql Secure Installation
+  community.mysql.mysql_user:
+    name: root
+    password: "{{ roots_passwd }}"
+    login_password: "{{ roots_passwd }}"
+ 
+- name: Copy phpmyadmin Template
+  template:
+    dest: /etc/httpd/conf.d/phpMyAdmin.conf
+    src: phpMyAdmin.conf.j2
+ 
+- name: Add services to the Firewall
+  firewalld:
+    state: enabled
+    service: "{{ item }}"
+    permanent: yes
+    immediate: yes
+  loop: "{{ firewall_services }}"
+ 
+- name: Restart httpd
+  service:
+    name: httpd
+    state: restarted
+ 
+- name: Copy identity file
+  template:
+    dest: /root/.my.cnf
+    src: my.cnf.j2
+ 
+- name: Copy database query file
+  copy:
+    src: database.sql
+    dest: /root/database.sql 
+ 
+#- name: Adding entries to a database
+ # shell: 
+   # chdir: /root
+   # cmd: mysql < database.sql
+ 
+- name: Dump SpringDevOps2021 database
+  mysql_db:
+    name: SpringDevOps2021
+    state: dump
+    target: /tmp/SpringDevOps2021_backup.sql

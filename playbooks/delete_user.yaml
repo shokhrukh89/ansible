@@ -1,0 +1,15 @@
+---
+- name: Deleteing user using ansible
+  hosts: all 
+  become: yes
+  vars_files:
+    - "/home/ansible/user_vars.yml"
+  tasks:
+    - name: Removing user to a system
+      user:
+        name: "{{ item }}"
+        force: yes
+        state: absent
+        remove: yes
+      loop: "{{ create_users }}"
+      
